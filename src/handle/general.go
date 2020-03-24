@@ -21,12 +21,13 @@ import (
 	"Yearning-go/src/soar"
 	"encoding/json"
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/labstack/echo/v4"
-	ser "github.com/pingcap/parser"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/jinzhu/gorm"
+	"github.com/labstack/echo/v4"
+	ser "github.com/pingcap/parser"
 )
 
 type fetch struct {
@@ -85,7 +86,7 @@ func GeneralSource(c echo.Context) (err error) {
 			inter = lib.Intersect(p.QuerySource, sList)
 		}
 	}
-	return c.JSON(http.StatusOK, map[string]interface{}{"assigned": p.Auditor, "source": inter, "x": x,})
+	return c.JSON(http.StatusOK, map[string]interface{}{"assigned": p.Auditor, "source": inter, "x": x})
 }
 
 func GeneralBase(c echo.Context) (err error) {
@@ -95,7 +96,7 @@ func GeneralBase(c echo.Context) (err error) {
 	var s model.CoreDataSource
 	var dataBase string
 	var l []string
-	var mid [] string
+	var mid []string
 
 	if t == "undefined" {
 		return
@@ -144,7 +145,6 @@ func GeneralTable(c echo.Context) (err error) {
 	var table string
 	var l []string
 	var highlist []map[string]string
-
 
 	model.DB().Where("source =?", u.Source).First(&s)
 
@@ -231,7 +231,8 @@ func GeneralSQLTest(c echo.Context) (err error) {
 	}
 	record, err := lib.TsClient(&y)
 	if err != nil {
-		return c.JSON(http.StatusOK,"")
+		var errorResult = [0]string{}
+		return c.JSON(http.StatusOK, errorResult)
 	}
 	return c.JSON(http.StatusOK, record)
 }

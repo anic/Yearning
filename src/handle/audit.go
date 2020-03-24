@@ -18,10 +18,11 @@ import (
 	"Yearning-go/src/model"
 	pb "Yearning-go/src/proto"
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/pingcap/parser"
 	"net/http"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/pingcap/parser"
 )
 
 type fetchorder struct {
@@ -205,6 +206,7 @@ func ExecuteOrder(c echo.Context) (err error) {
 
 	ps := lib.Decrypt(sor.Password)
 
+	//远程调用
 	s := pb.LibraAuditOrder{
 		SQL:      order.SQL,
 		Backup:   backup,
@@ -319,7 +321,7 @@ func OscPercent(c echo.Context) (err error) {
 
 func OscKill(c echo.Context) (err error) {
 	r := c.Param("work_id")
-	lib.ExKillOsc(&pb.LibraAuditOrder{WorkId:r})
+	lib.ExKillOsc(&pb.LibraAuditOrder{WorkId: r})
 	return c.JSON(http.StatusOK, "kill指令已发送!如工单最后显示为执行失败则生效!")
 }
 

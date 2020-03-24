@@ -17,9 +17,10 @@ import (
 	"Yearning-go/src/handle"
 	"Yearning-go/src/lib"
 	"Yearning-go/src/model"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"net/http"
 )
 
 func SuperManageDB(next echo.HandlerFunc) echo.HandlerFunc {
@@ -83,7 +84,7 @@ func AddRouter(e *echo.Echo) {
 	r.GET("/fetch/base/:source", handle.GeneralBase)
 	r.PUT("/fetch/table", handle.GeneralTable)
 	r.PUT("/fetch/tableinfo", handle.GeneralTableInfo)
-	r.PUT("/fetch/test", handle.GeneralSQLTest)
+	r.PUT("/fetch/test", handle.GeneralSQLTest) //工单测试
 	r.GET("/fetch/detail", handle.GeneralOrderDetailList)
 	r.GET("/fetch/roll", handle.GeneralOrderDetailRollSQL)
 	r.POST("/fetch/rollorder", handle.RollBackSQLOrder)
@@ -97,8 +98,8 @@ func AddRouter(e *echo.Echo) {
 	r.DELETE("/query/undo", handle.UndoQueryOrder)
 	r.PUT("/query/beauty", handle.GeneralQueryBeauty)
 	r.PUT("/query/merge", handle.GeneralMergeDDL)
-	r.POST("/sql/refer", handle.SQLReferToOrder)
-	r.GET("/board",handle.GeneralFetchBoard)
+	r.POST("/sql/refer", handle.SQLReferToOrder) //提交工单
+	r.GET("/board", handle.GeneralFetchBoard)
 
 	audit := r.Group("/audit", AuditGroup)
 	audit.POST("/refer/perform", handle.MulitAuditOrder)
@@ -130,7 +131,7 @@ func AddRouter(e *echo.Echo) {
 	group.PUT("/setting/test/:el", handle.SuperTestSetting)
 	group.POST("/setting/del/order", handle.UndoAuditOrder)
 	group.POST("/setting/del/query", handle.DelQueryOrder)
-	group.POST("/board/post",handle.GeneralPostBoard)
+	group.POST("/board/post", handle.GeneralPostBoard)
 
 	user := r.Group("/management_user", SuperManageUser)
 	user.POST("/modify", handle.SuperModifyUser)

@@ -16,10 +16,10 @@ package handle
 import (
 	"Yearning-go/src/lib"
 	"Yearning-go/src/model"
-	pb "Yearning-go/src/proto"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"time"
+
+	"github.com/labstack/echo/v4"
 )
 
 type ddl struct {
@@ -73,59 +73,59 @@ func SQLReferToOrder(c echo.Context) (err error) {
 	lib.MessagePush(c, w, 2, "")
 
 	// todo 以下代码为autoTask代码
-	var sor model.CoreDataSource
-	model.DB().Where("source =?", u.DDL.Source).First(&sor)
-	ps := lib.Decrypt(sor.Password)
-	s := pb.LibraAuditOrder{
-		IsAutoTask: true,
-		DataBase:   u.DDL.Database,
-		Name:       u.DDL.Source,
-		Source: &pb.Source{
-			Addr:     sor.IP,
-			User:     sor.Username,
-			Password: ps,
-			Port:     int32(sor.Port),
-		},
-		SQL: u.SQL,
-	}
-	r := lib.ExAutoTask(&s)
-	if r {
-		var order model.CoreSqlOrder
-		model.DB().Where("work_id =?", w).First(&order)
-		backup := false
-		if u.DDL.Backup == 1 {
-			backup = true
-		}
-		// todo 调整参数
-		s.IsDML = true
-		s.WorkId = w
-		s.Backup = backup
-		s.Execute = true
-		s.SQL = u.SQL
+	// var sor model.CoreDataSource
+	// model.DB().Where("source =?", u.DDL.Source).First(&sor)
+	// ps := lib.Decrypt(sor.Password)
+	// s := pb.LibraAuditOrder{
+	// 	IsAutoTask: true,
+	// 	DataBase:   u.DDL.Database,
+	// 	Name:       u.DDL.Source,
+	// 	Source: &pb.Source{
+	// 		Addr:     sor.IP,
+	// 		User:     sor.Username,
+	// 		Password: ps,
+	// 		Port:     int32(sor.Port),
+	// 	},
+	// 	SQL: u.SQL,
+	// }
+	// r := lib.ExAutoTask(&s)
+	// if r {
+	// 	var order model.CoreSqlOrder
+	// 	model.DB().Where("work_id =?", w).First(&order)
+	// 	backup := false
+	// 	if u.DDL.Backup == 1 {
+	// 		backup = true
+	// 	}
+	// 	// todo 调整参数
+	// 	s.IsDML = true
+	// 	s.WorkId = w
+	// 	s.Backup = backup
+	// 	s.Execute = true
+	// 	s.SQL = u.SQL
 
-		// todo 开始执行
+	// 	// todo 开始执行
 
-		go func() {
-			t1 := lib.TimerEx(&order)
-			if t1 > 0 {
-				tick := time.NewTicker(t1)
-				for {
-					select {
-					case <-tick.C:
-						lib.ExDMLClient(&s)
-						tick.Stop()
-						goto ENDCHECK
-					}
-				ENDCHECK:
-					break
-				}
-			} else {
-				lib.ExDMLClient(&s)
-			}
+	// 	go func() {
+	// 		t1 := lib.TimerEx(&order)
+	// 		if t1 > 0 {
+	// 			tick := time.NewTicker(t1)
+	// 			for {
+	// 				select {
+	// 				case <-tick.C:
+	// 					lib.ExDMLClient(&s)
+	// 					tick.Stop()
+	// 					goto ENDCHECK
+	// 				}
+	// 			ENDCHECK:
+	// 				break
+	// 			}
+	// 		} else {
+	// 			lib.ExDMLClient(&s)
+	// 		}
 
-		}()
-		model.DB().Model(&model.CoreSqlOrder{}).Where("work_id =?", w).Updates(map[string]interface{}{"status": 3})
-	}
+	// 	}()
+	// 	model.DB().Model(&model.CoreSqlOrder{}).Where("work_id =?", w).Updates(map[string]interface{}{"status": 3})
+	// }
 
 	return c.JSON(http.StatusOK, "工单已提交,请等待审核人审核！")
 }

@@ -57,6 +57,7 @@ Options:
 }
 
 func init() {
+
 	flag.BoolVar(&s, "s", false, "启动Yearning")
 	flag.BoolVar(&m, "m", false, "数据初始化(第一次安装时执行)")
 	flag.StringVar(&p, "p", "8000", "Yearning端口")
